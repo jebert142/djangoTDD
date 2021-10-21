@@ -4,26 +4,27 @@ from .forms import HashForm
 import hashlib
 from .models import Hash
 
-
-# class FunctionalTest(TestCase):
-#     def setUp(self):
-#         self.browser = webdriver.Firefox()
+# Functional Tests for the HashThat Project
+# Will open Firefox multiple times if all are run
+class FunctionalTest(TestCase):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
     
-#     def test_there_is_homepage(self):
-#         self.browser.get('http://localhost:8000')
-#         self.assertIn('Enter Hash here: ', self.browser.page_source)
+    def test_there_is_homepage(self):
+        self.browser.get('http://localhost:8000')
+        self.assertIn('Enter Hash Here: ', self.browser.page_source)
 
-#     def test_user_input_text(self):
-#         self.browser.get('http://localhost:8000')
-#         text = self.browser.find_element_by_id('id_text')
-#         text.send_keys('hello')
-#         self.browser.find_element_by_name('submit').click()
-#         self.assertIn('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824', self.browser.page_source)
+    def test_user_input_text(self):
+        self.browser.get('http://localhost:8000')
+        text = self.browser.find_element_by_id('id_text')
+        text.send_keys('hello')
+        self.browser.find_element_by_name('submit').click()
+        self.assertIn('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824', self.browser.page_source)
 
-#     def tearDown(self):
-#         self.browser.quit()
+    def tearDown(self):
+        self.browser.quit()
    
-    
+# Unit Tests for the HashThat Project
 class UnitTestCase(TestCase):
     def test_home_homepage_template(self):
         response =  self.client.get('/')
