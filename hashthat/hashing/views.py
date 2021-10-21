@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from .forms import HashForm
 from .models import Hash
 import hashlib
+from django.http import JsonResponse
 
 def home(request):
     if request.method == 'POST':
@@ -25,3 +26,8 @@ def home(request):
 def hash(request, hash):
     hash = Hash.objects.get(hash=hash)
     return render(request, 'hashing/hash.html', {'hash':hash})
+
+
+def quickhash(request):
+    text = request.GET.get('text')  #had to update this from 'request.GET' to 'request.GET.get' since the newest version of Django changed
+    return JsonResponse({'hash':hashlib.sha256(text.encode('utf-8')).hexdigest()})

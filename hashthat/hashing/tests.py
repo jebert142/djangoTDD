@@ -3,6 +3,8 @@ from selenium import webdriver
 from .forms import HashForm
 import hashlib
 from .models import Hash
+from django.core.exceptions import ValidationError
+import time
 
 # Functional Tests for the HashThat Project
 # Will open Firefox multiple times if all are run
@@ -14,11 +16,19 @@ class FunctionalTest(TestCase):
         self.browser.get('http://localhost:8000')
         self.assertIn('Enter Hash Here: ', self.browser.page_source)
 
-    def test_user_input_text(self):
+    # def test_user_input_text(self):
+    #     self.browser.get('http://localhost:8000')
+    #     text = self.browser.find_element_by_id('id_text')
+    #     text.send_keys('hello')
+    #     self.browser.find_element_by_name('submit').click()
+    #     self.assertIn('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824', self.browser.page_source)
+
+    # ajax test, had to comment out test above or else the text area already has text in it when this test is run, which fails the test
+    def test_hash_ajax(self):
         self.browser.get('http://localhost:8000')
         text = self.browser.find_element_by_id('id_text')
         text.send_keys('hello')
-        self.browser.find_element_by_name('submit').click()
+        time.sleep(5)  # Wait for AJAX
         self.assertIn('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824', self.browser.page_source)
 
     def tearDown(self):
@@ -56,3 +66,12 @@ class UnitTestCase(TestCase):
         hash = self.saveHash()
         response = self.client.get('/hash/2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824')
         self.assertContains(response, 'hello')
+
+    # a test designed to fail
+    def test_bad_data(self):
+        def badHash():
+            hash = Hash()
+            hash.hash = '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824gggg'
+            hash.full_clean()
+        self.assertRaises(ValidationError, badHash)
+        
